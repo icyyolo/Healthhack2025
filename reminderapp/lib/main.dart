@@ -9,27 +9,11 @@ void main() {
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Demo',
+      title: 'Flutter Chat Demo',
       theme: ThemeData(
-        // This is the theme of your application.
-        //
-        // TRY THIS: Try running your application with "flutter run". You'll see
-        // the application has a purple toolbar. Then, without quitting the app,
-        // try changing the seedColor in the colorScheme below to Colors.green
-        // and then invoke "hot reload" (save your changes or press the "hot
-        // reload" button in a Flutter-supported IDE, or press "r" if you used
-        // the command line to start the app).
-        //
-        // Notice that the counter didn't reset back to zero; the application
-        // state is not lost during the reload. To reset the state, use hot
-        // restart instead.
-        //
-        // This works for code too, not just values: Most code changes can be
-        // tested with just a hot reload.
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
@@ -44,17 +28,19 @@ class ChatPage extends StatefulWidget {
 }
 
 class _ChatPageState extends State<ChatPage> {
-  List<Map<String, String>> messages = []; // Store user message + server reply
+  List<Map<String, String>> messages = [];
   final TextEditingController _controller = TextEditingController();
-  final String serverUrl =
-      "http://127.0.0.1:5000/send"; // Change if using a remote server
+  final String serverUrl = "http://127.0.0.1:5000/send";
+  bool _isLoading = false;
 
   void sendMessage() async {
-    String message = _controller.text;
+    String message = _controller.text.trim();
     if (message.isNotEmpty) {
-      List<String> chunks =
-          _splitMessage(message, 10); // Splitting into chunks of 10 characters
+      setState(() {
+        _isLoading = true;
+      });
 
+      List<String> chunks = _splitMessage(message, 10);
       for (String chunk in chunks) {
         String serverReply = await _sendChunkToServer(chunk);
         setState(() {
@@ -63,6 +49,9 @@ class _ChatPageState extends State<ChatPage> {
       }
 
       _controller.clear();
+      setState(() {
+        _isLoading = false;
+      });
     }
   }
 
@@ -82,10 +71,9 @@ class _ChatPageState extends State<ChatPage> {
         headers: {"Content-Type": "application/json"},
         body: jsonEncode({"message": chunk}),
       );
-
       if (response.statusCode == 200) {
         var data = jsonDecode(response.body);
-        return data["reply"] ?? "No reply"; // Get server response
+        return data["reply"] ?? "No reply";
       } else {
         return "Error from server: ${response.body}";
       }
@@ -97,40 +85,54 @@ class _ChatPageState extends State<ChatPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text("Chat Page")),
+      appBar: AppBar(
+        title: Text("Chat Page"),
+        centerTitle: true,
+      ),
       body: Column(
         children: [
           Expanded(
             child: ListView.builder(
+              reverse:
+                  true, // Reverse the list to show the latest message at the bottom
               itemCount: messages.length,
               itemBuilder: (context, index) {
+                int reversedIndex = messages.length - 1 - index;
                 return Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
                     Align(
                       alignment: Alignment.centerRight,
                       child: Container(
-                        padding: EdgeInsets.all(12),
+                        padding:
+                            EdgeInsets.symmetric(vertical: 10, horizontal: 15),
                         margin:
                             EdgeInsets.symmetric(vertical: 5, horizontal: 10),
                         decoration: BoxDecoration(
-                          color: Colors.blue[100],
-                          borderRadius: BorderRadius.circular(12),
+                          color: Colors.blue[200],
+                          borderRadius: BorderRadius.circular(20),
                         ),
-                        child: Text(messages[index]["user"] ?? ""),
+                        child: Text(
+                          messages[reversedIndex]["user"] ?? "",
+                          style: TextStyle(color: Colors.white),
+                        ),
                       ),
                     ),
                     Align(
                       alignment: Alignment.centerLeft,
                       child: Container(
-                        padding: EdgeInsets.all(12),
+                        padding:
+                            EdgeInsets.symmetric(vertical: 10, horizontal: 15),
                         margin:
                             EdgeInsets.symmetric(vertical: 5, horizontal: 10),
                         decoration: BoxDecoration(
-                          color: Colors.green[100],
-                          borderRadius: BorderRadius.circular(12),
+                          color: Colors.green[200],
+                          borderRadius: BorderRadius.circular(20),
                         ),
-                        child: Text(messages[index]["server"] ?? ""),
+                        child: Text(
+                          messages[reversedIndex]["server"] ?? "",
+                          style: TextStyle(color: Colors.white),
+                        ),
                       ),
                     ),
                   ],
@@ -145,12 +147,21 @@ class _ChatPageState extends State<ChatPage> {
                 Expanded(
                   child: TextField(
                     controller: _controller,
-                    decoration: InputDecoration(hintText: "Type a message..."),
+                    decoration: InputDecoration(
+                      hintText: "Type a message...",
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(25),
+                      ),
+                      contentPadding: EdgeInsets.symmetric(horizontal: 15),
+                    ),
                   ),
                 ),
+                SizedBox(width: 8),
                 IconButton(
-                  icon: Icon(Icons.send),
-                  onPressed: sendMessage,
+                  icon: _isLoading
+                      ? CircularProgressIndicator(color: Colors.blue)
+                      : Icon(Icons.send, color: Colors.blue),
+                  onPressed: _isLoading ? null : sendMessage,
                 ),
               ],
             ),
