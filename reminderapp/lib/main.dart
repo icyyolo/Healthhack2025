@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
 
 void main() {
   runApp(const MyApp());
@@ -31,57 +33,107 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
-      home: const ChatPage(),
+      home: ChatPage(),
     );
   }
 }
 
 class ChatPage extends StatefulWidget {
-  const ChatPage({super.key});
-
   @override
   _ChatPageState createState() => _ChatPageState();
 }
 
 class _ChatPageState extends State<ChatPage> {
-  List<String> messages = [];
+  List<Map<String, String>> messages = []; // Store user message + server reply
   final TextEditingController _controller = TextEditingController();
+  final String serverUrl =
+      "http://127.0.0.1:5000/send"; // Change if using a remote server
 
-  void sendMessage() {
-    if (_controller.text.isNotEmpty) {
-      setState(() {
-        messages.add(_controller.text);
-      });
+  void sendMessage() async {
+    String message = _controller.text;
+    if (message.isNotEmpty) {
+      List<String> chunks =
+          _splitMessage(message, 10); // Splitting into chunks of 10 characters
+
+      for (String chunk in chunks) {
+        String serverReply = await _sendChunkToServer(chunk);
+        setState(() {
+          messages.add({"user": chunk, "server": serverReply});
+        });
+      }
+
       _controller.clear();
+    }
+  }
+
+  List<String> _splitMessage(String message, int chunkSize) {
+    List<String> chunks = [];
+    for (int i = 0; i < message.length; i += chunkSize) {
+      chunks.add(message.substring(
+          i, i + chunkSize > message.length ? message.length : i + chunkSize));
+    }
+    return chunks;
+  }
+
+  Future<String> _sendChunkToServer(String chunk) async {
+    try {
+      var response = await http.post(
+        Uri.parse(serverUrl),
+        headers: {"Content-Type": "application/json"},
+        body: jsonEncode({"message": chunk}),
+      );
+
+      if (response.statusCode == 200) {
+        var data = jsonDecode(response.body);
+        return data["reply"] ?? "No reply"; // Get server response
+      } else {
+        return "Error from server: ${response.body}";
+      }
+    } catch (e) {
+      return "Error sending message: $e";
     }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-          backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-          title: Text("Nama Dr")),
+      appBar: AppBar(title: Text("Chat Page")),
       body: Column(
         children: [
           Expanded(
             child: ListView.builder(
               itemCount: messages.length,
               itemBuilder: (context, index) {
-                return Align(
-                  alignment: index % 2 == 0
-                      ? Alignment.centerLeft
-                      : Alignment.centerRight,
-                  child: Container(
-                    padding: EdgeInsets.all(12),
-                    margin: EdgeInsets.symmetric(vertical: 5, horizontal: 10),
-                    decoration: BoxDecoration(
-                      color:
-                          index % 2 == 0 ? Colors.blue[100] : Colors.green[100],
-                      borderRadius: BorderRadius.circular(12),
+                return Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Align(
+                      alignment: Alignment.centerRight,
+                      child: Container(
+                        padding: EdgeInsets.all(12),
+                        margin:
+                            EdgeInsets.symmetric(vertical: 5, horizontal: 10),
+                        decoration: BoxDecoration(
+                          color: Colors.blue[100],
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: Text(messages[index]["user"] ?? ""),
+                      ),
                     ),
-                    child: Text(messages[index]),
-                  ),
+                    Align(
+                      alignment: Alignment.centerLeft,
+                      child: Container(
+                        padding: EdgeInsets.all(12),
+                        margin:
+                            EdgeInsets.symmetric(vertical: 5, horizontal: 10),
+                        decoration: BoxDecoration(
+                          color: Colors.green[100],
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: Text(messages[index]["server"] ?? ""),
+                      ),
+                    ),
+                  ],
                 );
               },
             ),
