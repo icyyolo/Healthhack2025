@@ -79,7 +79,7 @@ class _ChatPageState extends State<ChatPage> {
                 color: Colors.blue,
               ),
               child: Text(
-                'Welcome back!\n${widget.username ?? "Guest"}',
+                'Welcome back!\n${widget.username}',
                 // 'Welcome back!\n ',
                 // title: Text("Welcome, ${widget.username}"),
                 style: TextStyle(

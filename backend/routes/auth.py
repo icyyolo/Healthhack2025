@@ -18,6 +18,7 @@ def login():
     password = data.get('password')
 
     temp = find_one_collection({"username": username}, "users")
+    print(temp)
 
     # Validate credentials (dummy example)
     if checkPassword(password, temp["salt"], temp["password"]):

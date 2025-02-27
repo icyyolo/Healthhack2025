@@ -4,6 +4,11 @@ app = Flask(__name__)
 
 received_messages = {}
 
+@app.route('/testing', methods=['GET'])
+def getTesting():
+    print("ok")
+    return jsonify({"full_message": "full_message"})
+
 @app.route('/send', methods=['POST'])
 async def receive_chunk():
     data = request.json
