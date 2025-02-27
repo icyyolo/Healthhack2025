@@ -15,7 +15,7 @@ from langgraph.prebuilt import ToolNode
 from langgraph.prebuilt import create_react_agent
 
 def initllm():
-    global llm, memory, agent_executor
+    global llm, memory, agent_executor, vector_store
     load_dotenv()
     USER_AGENT = 'myagent'
     LANGSMITH_TRACING = "true"

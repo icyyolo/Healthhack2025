@@ -24,14 +24,19 @@ class _ChatPageState extends State<ChatPage> {
         _isLoading = true;
       });
 
-      List<String> chunks = _splitMessage(message, 10);
-      for (String chunk in chunks) {
-        String serverReply = await _apiService.sendChunkToServer(chunk);
-        setState(() {
-          messages.add({"user": chunk, "server": serverReply});
-        });
-      }
+      // TODO, change the chunks to lower
+      // List<String> chunks = _splitMessage(message, 10);
+      // for (String chunk in chunks) {
+      //   String serverReply = await _apiService.sendChunkToServer(chunk);
+      //   setState(() {
+      //     messages.add({"user": chunk, "server": serverReply});
+      //   });
+      // }
 
+      String serverReply = await _apiService.sendChunkToServer(message);
+      setState(() {
+        messages.add({"user": message, "server": serverReply});
+      });
       _controller.clear();
       setState(() {
         _isLoading = false;
@@ -52,8 +57,53 @@ class _ChatPageState extends State<ChatPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Welcome, ${widget.username}"),
-        centerTitle: true,
+        // title: Text("Welcome, ${widget.username}"),
+        title: const Text("ManarDr"),
+        backgroundColor:
+            Colors.blue, //ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+        centerTitle: false,
+        leading: Builder(
+          builder: (context) => IconButton(
+              onPressed: () {
+                Scaffold.of(context).openDrawer();
+              },
+              icon: const Icon(Icons.menu)),
+        ),
+      ),
+      drawer: Drawer(
+        child: ListView(
+          padding: EdgeInsets.zero,
+          children: [
+            DrawerHeader(
+              decoration: BoxDecoration(
+                color: Colors.blue,
+              ),
+              child: Text(
+                'Welcome back!\n${widget.username ?? "Guest"}',
+                // 'Welcome back!\n ',
+                // title: Text("Welcome, ${widget.username}"),
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 24,
+                ),
+              ),
+            ),
+            ListTile(
+              title: const Text('Home'),
+              onTap: () {
+                // Handle navigation
+                Navigator.pop(context); // Close the drawer
+              },
+            ),
+            ListTile(
+              title: const Text('Settings'),
+              onTap: () {
+                // Handle navigation
+                Navigator.pop(context); // Close the drawer
+              },
+            ),
+          ],
+        ),
       ),
       body: Column(
         children: [

@@ -1,2 +1,3 @@
 .venv/
 miniGPT/.env
+backend/routes/.env
