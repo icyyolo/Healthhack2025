@@ -12,9 +12,10 @@
 #     app.run(debug=True)
 
 from flask import Flask, request, jsonify
+from routes.auth import auth_bp
 
 app = Flask(__name__)
-
+app.register_blueprint(auth_bp)
 received_messages = {}
 
 @app.route('/send', methods=['POST'])
