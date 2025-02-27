@@ -38,4 +38,21 @@ class ApiService {
       return false;
     }
   }
+
+  Future<bool> pingServer() async {
+    try {
+      var response = await http.get(Uri.parse(serverUrl + "/testing"),
+          headers: {"Content-Type": "application/json"});
+      if (response.statusCode == 200) {
+        Map<String, dynamic> data = jsonDecode(response.body);
+        if (data["test"] == true) {
+          return true;
+        }
+        return true;
+      }
+      return false;
+    } catch (e) {
+      return false;
+    }
+  }
 }

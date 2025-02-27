@@ -7,7 +7,7 @@ received_messages = {}
 @app.route('/testing', methods=['GET'])
 def getTesting():
     print("ok")
-    return jsonify({"full_message": "full_message"})
+    return jsonify({"test": "true"})
 
 @app.route('/send', methods=['POST'])
 async def receive_chunk():

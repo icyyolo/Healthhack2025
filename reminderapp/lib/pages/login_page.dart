@@ -12,6 +12,14 @@ class _LoginPageState extends State<LoginPage> {
   final TextEditingController _passwordController = TextEditingController();
   final ApiService _apiService = ApiService();
   bool _isLoading = false;
+  bool _isConnected = false;
+
+  void _test() async {
+    bool status = await _apiService.pingServer();
+    setState(() {
+      _isConnected = status;
+    });
+  }
 
   void _login() async {
     setState(() {
@@ -47,6 +55,13 @@ class _LoginPageState extends State<LoginPage> {
     } else {
       return;
     }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    // Call the async method here
+    _test();
   }
 
   @override
@@ -92,6 +107,11 @@ class _LoginPageState extends State<LoginPage> {
                     ),
                     child: Text("Login"),
                   ),
+            Text(
+              _isConnected ? "Connected!" : "Not Connected.",
+              style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+            ),
+            SizedBox(height: 20),
           ],
         ),
       ),
