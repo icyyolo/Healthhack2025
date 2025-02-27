@@ -14,39 +14,32 @@ from langgraph.graph import MessagesState
 from langgraph.prebuilt import ToolNode
 from langgraph.prebuilt import create_react_agent
 
-import asyncio
+load_dotenv()
+USER_AGENT = 'myagent'
+LANGSMITH_TRACING = "true"
+GROQ_API_KEY = os.getenv("GROQ_API_KEY")
+LANGSMITH_API_KEY = os.getenv("LANGSMITH_API_KEY")
 
-def init_llm():
-    global llm, agent_executor, memory
-    load_dotenv()
-    USER_AGENT = 'myagent'
-    LANGSMITH_TRACING = "true"
-    GROQ_API_KEY = os.getenv("GROQ_API_KEY")
-    LANGSMITH_API_KEY = os.getenv("LANGSMITH_API_KEY")
+llm = init_chat_model("llama3-8b-8192", model_provider="groq")
 
-    llm = init_chat_model("llama3-8b-8192", model_provider="groq")
+# Initialize Chroma vector_store
+persist_directory = "chromadb"
+embeddings = OllamaEmbeddings(model="llama3")
+vector_store = Chroma(persist_directory=persist_directory, embedding_function=embeddings)
 
-    # Initialize Chroma vector_store
-    persist_directory = "chromadb"
-    embeddings = OllamaEmbeddings(model="llama3")
-    vector_store = Chroma(persist_directory=persist_directory, embedding_function=embeddings)
+print("Restoring ChromaDB (Will take around 1.5 mins)...")
+# Load the backup JSON
+with open("json/chroma_backup.json", "r") as f:
+    backup_data = json.load(f)
 
-    print("Restoring ChromaDB (Will take around 1.5 mins)...")
-    # Load the backup JSON
-    with open("json/chroma_backup.json", "r") as f:
-        backup_data = json.load(f)
+# Add data back into the vectorstore
+vector_store.add_texts(
+    texts=backup_data["documents"],
+    metadatas=backup_data.get("metadatas", []),
+    ids=backup_data["ids"]
+)
 
-    # Add data back into the vectorstore
-    vector_store.add_texts(
-        texts=backup_data["documents"],
-        metadatas=backup_data.get("metadatas", []),
-        ids=backup_data["ids"]
-    )
-
-    print("ChromaDB is restored from 'chroma_backup.json'")
-
-    memory = MemorySaver()
-    agent_executor = create_react_agent(llm, [retrieve], checkpointer=memory)
+print("ChromaDB is restored from 'chroma_backup.json'")
 
 @tool(response_format="content_and_artifact")
 def retrieve(query: str):
@@ -110,7 +103,8 @@ def generate(state: MessagesState):
     response = llm.ainvoke(prompt)
     return {"messages": [response]}
 
-
+memory = MemorySaver()
+agent_executor = create_react_agent(llm, [retrieve], checkpointer=memory)
 
 async def askLLM(id, input):
     input_message = (input)
@@ -123,13 +117,3 @@ async def askLLM(id, input):
     ):
         pass
     return output["agent"]["messages"][0].content.split("</tool-use>")[-1].strip()
-
-async def testing():
-    output = await askLLM("1", "what are you")
-    print(output)
-
-init_llm()
-print("1")
-asyncio.run(testing())
-# output = askLLM("1", "what are you")
-# print(output)
