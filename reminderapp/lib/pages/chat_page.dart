@@ -64,7 +64,11 @@ class _ChatPageState extends State<ChatPage> {
             SizedBox(width: 8), // Space between the image and the text
             const Text(
               "Dr Discharge",
-              style: TextStyle(color: Colors.black), // You can change the text color here
+              style: TextStyle(
+                fontFamily: 'Inter', 
+                color: Colors.black, 
+                fontWeight: FontWeight.w500
+              ), // You can change the text color here
             ),
           ],
         ),
@@ -103,13 +107,21 @@ class _ChatPageState extends State<ChatPage> {
               ),
             ),
             ListTile(
-              title: const Text('Home'),
+              title: const Text('Home',
+                style: TextStyle(fontFamily: 'Inter',
+                color: Colors.black,
+                fontWeight: FontWeight.w300)
+              ),
               onTap: () {
                 Navigator.pop(context); // Close the drawer
               },
             ),
             ListTile(
-              title: const Text('Settings'),
+              title: const Text('Settings',
+              style: TextStyle(fontFamily: 'Inter',
+                color: Colors.black,
+                fontWeight: FontWeight.w300)
+              ),
               onTap: () {
                 Navigator.pop(context); // Close the drawer
                 Navigator.push(

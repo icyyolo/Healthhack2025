@@ -46,11 +46,13 @@ class SettingsPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Settings'),
+        title: Text('Settings',
+          style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, fontFamily: 'Inter'),
+        ),
         backgroundColor: Colors.grey,
         actions: [
           IconButton(
-            icon: Icon(Icons.logout, color: Colors.white),
+            icon: Icon(Icons.logout, color: Colors.black),
             onPressed: () => _showLogoutConfirmation(context),
           ),
         ],
