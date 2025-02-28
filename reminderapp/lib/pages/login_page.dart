@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../services/api_service.dart';
 import 'chat_page.dart';
+import 'dart:async';
 
 class LoginPage extends StatefulWidget {
   @override
@@ -13,6 +14,7 @@ class _LoginPageState extends State<LoginPage> {
   final ApiService _apiService = ApiService();
   bool _isLoading = false;
   bool _isConnected = false;
+  late Timer _timer;
 
   void _test() async {
     bool status = await _apiService.pingServer();
@@ -61,7 +63,21 @@ class _LoginPageState extends State<LoginPage> {
   void initState() {
     super.initState();
     // Call the async method here
+    // Start polling by calling fetchData every 5 seconds
+    _timer = Timer.periodic(Duration(seconds: 5), (timer) {
+      _test();
+    });
+
+    // Initial data fetch
     _test();
+  }
+
+  @override
+  void dispose() {
+    // Cancel the timer when the widget is disposed
+    _timer.cancel();
+    print("Timer canceled");
+    super.dispose();
   }
 
   @override

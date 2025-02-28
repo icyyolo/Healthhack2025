@@ -3,6 +3,23 @@ import 'dart:convert';
 
 class ApiService {
   final String serverUrl = "http://127.0.0.1:5000";
+  // final String renderServerUri = "https://renderhealthhack2025.onrender.com"; // Change this to "http://127.0.0.1:5000" for testing purposes
+  final String renderServerUri = "http://127.0.0.1:5000";
+
+  Future<String> checkServerOnline() async {
+    try {
+      var response = await http.get(
+        Uri.parse(renderServerUri + "/api/checkalive"),
+        headers: {"Content-Type": "application/json"},
+      );
+      if (response.statusCode == 200) {
+        return renderServerUri;
+      }
+      return serverUrl;
+    } catch (e) {
+      return serverUrl;
+    }
+  }
 
   Future<String> sendChunkToServer(String chunk) async {
     try {
@@ -24,8 +41,9 @@ class ApiService {
 
   Future<bool> validateLogin(String username, String password) async {
     try {
+      var uri = await checkServerOnline();
       var response = await http.post(
-        Uri.parse(serverUrl + "/login"),
+        Uri.parse(uri + "/login"),
         headers: {"Content-Type": "application/json"},
         body: jsonEncode({"username": username, "password": password}),
       );

@@ -18,7 +18,11 @@ def login():
     password = data.get('password')
 
     temp = find_one_collection({"username": username}, "users")
+
     print(temp)
+    if (temp == None):
+        return jsonify({"error": "Invalid credentials"}), 401
+    
 
     # Validate credentials (dummy example)
     if checkPassword(password, temp["salt"], temp["password"]):
