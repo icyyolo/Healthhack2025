@@ -116,7 +116,6 @@ class _LoginPageState extends State<LoginPage> {
                     "images/Logo.png", // Replace with your image path
                     width: 100, // Adjust the width as needed
                     height: 100, // Adjust the height as needed
-                    
                   ),
                 ),
                 SizedBox(height: 20),

@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import '../widgets/message_bubble.dart';
 import '../services/api_service.dart';
+import 'settings_page.dart';
 
 class ChatPage extends StatefulWidget {
   final String username;
@@ -14,6 +16,7 @@ class ChatPage extends StatefulWidget {
 class _ChatPageState extends State<ChatPage> {
   List<Map<String, String>> messages = [];
   final TextEditingController _controller = TextEditingController();
+  final FocusNode _focusNode = FocusNode(); // Declare FocusNode
   final ApiService _apiService = ApiService();
   bool _isLoading = false;
 
@@ -24,15 +27,6 @@ class _ChatPageState extends State<ChatPage> {
         _isLoading = true;
       });
 
-      // TODO, change the chunks to lower
-      // List<String> chunks = _splitMessage(message, 10);
-      // for (String chunk in chunks) {
-      //   String serverReply = await _apiService.sendChunkToServer(chunk);
-      //   setState(() {
-      //     messages.add({"user": chunk, "server": serverReply});
-      //   });
-      // }
-
       String serverReply = await _apiService.sendChunkToServer(message);
       setState(() {
         messages.add({"user": message, "server": serverReply});
@@ -41,33 +35,38 @@ class _ChatPageState extends State<ChatPage> {
       setState(() {
         _isLoading = false;
       });
-    }
-  }
 
-  List<String> _splitMessage(String message, int chunkSize) {
-    List<String> chunks = [];
-    for (int i = 0; i < message.length; i += chunkSize) {
-      chunks.add(message.substring(
-          i, i + chunkSize > message.length ? message.length : i + chunkSize));
+      // Automatically focus the text field again after sending the message
+      FocusScope.of(context).requestFocus(_focusNode);
     }
-    return chunks;
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        // title: Text("Welcome, ${widget.username}"),
-        title: const Text("ManarDr"),
-        backgroundColor:
-            Colors.blue, //ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+        backgroundColor: Colors.grey, // Updated color
         centerTitle: false,
         leading: Builder(
           builder: (context) => IconButton(
-              onPressed: () {
-                Scaffold.of(context).openDrawer();
-              },
-              icon: const Icon(Icons.menu)),
+            onPressed: () {
+              Scaffold.of(context).openDrawer();
+            },
+            icon: const Icon(Icons.menu, color: Colors.black), // White icon
+          ),
+        ),
+        title: Row(
+          children: [
+            CircleAvatar(
+              radius: 20, // Adjust the size of the image
+              backgroundImage: AssetImage("images/Logo.png"), // Your image asset
+            ),
+            SizedBox(width: 8), // Space between the image and the text
+            const Text(
+              "Dr Discharge",
+              style: TextStyle(color: Colors.black), // You can change the text color here
+            ),
+          ],
         ),
       ),
       drawer: Drawer(
@@ -76,30 +75,49 @@ class _ChatPageState extends State<ChatPage> {
           children: [
             DrawerHeader(
               decoration: BoxDecoration(
-                color: Colors.blue,
+                color: Colors.grey, // Background color of the header
               ),
-              child: Text(
-                'Welcome back!\n${widget.username}',
-                // 'Welcome back!\n ',
-                // title: Text("Welcome, ${widget.username}"),
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 24,
-                ),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'Welcome back!',
+                    style: TextStyle(
+                      fontFamily: 'Inter',
+                      color: Colors.white,
+                      fontSize: 15,
+                    ),
+                  ),
+                  SizedBox(height: 5), // Add some spacing between the texts
+                  Text(
+                    widget.username, // Display the username
+                    style: TextStyle(
+                      fontFamily: 'Inter',
+                      color: Colors.white,
+                      fontSize: 24,
+                      fontWeight: FontWeight.w900,
+                    ),
+                  ),
+                ],
               ),
             ),
             ListTile(
               title: const Text('Home'),
               onTap: () {
-                // Handle navigation
                 Navigator.pop(context); // Close the drawer
               },
             ),
             ListTile(
               title: const Text('Settings'),
               onTap: () {
-                // Handle navigation
                 Navigator.pop(context); // Close the drawer
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => SettingsPage(username: widget.username),
+                  ),
+                );
               },
             ),
           ],
@@ -131,30 +149,45 @@ class _ChatPageState extends State<ChatPage> {
           ),
           Padding(
             padding: EdgeInsets.all(8.0),
-            child: Row(
-              children: [
-                Expanded(
-                  child: TextField(
-                    controller: _controller,
-                    decoration: InputDecoration(
-                      hintText: "Type a message...",
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(25),
+            child: Container(
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(25),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.1),
+                    blurRadius: 5,
+                    spreadRadius: 2,
+                  ),
+                ],
+              ),
+              child: Row(
+                children: [
+                  Expanded(
+                    child: TextField(
+                      controller: _controller,
+                      focusNode: _focusNode, // Set focus node
+                      decoration: InputDecoration(
+                        hintText: "Type a message...",
+                        border: InputBorder.none, // Remove default border
+                        contentPadding: EdgeInsets.symmetric(horizontal: 20, vertical: 15),
                       ),
-                      contentPadding: EdgeInsets.symmetric(horizontal: 15),
+                      textInputAction: TextInputAction.send, // Set Enter key to "send"
+                      onSubmitted: (value) {
+                        sendMessage(); // Call sendMessage() when Enter is pressed
+                      },
                     ),
                   ),
-                ),
-                SizedBox(width: 8),
-                IconButton(
-                  icon: _isLoading
-                      ? CircularProgressIndicator(color: Colors.blue)
-                      : Icon(Icons.send, color: Colors.blue),
-                  onPressed: _isLoading ? null : sendMessage,
-                ),
-              ],
+                  IconButton(
+                    icon: _isLoading
+                        ? CircularProgressIndicator(color: Colors.white)
+                        : Icon(Icons.send, color: Colors.blue),
+                    onPressed: _isLoading ? null : sendMessage,
+                  ),
+                ],
+              ),
             ),
-          ),
+          )
         ],
       ),
     );

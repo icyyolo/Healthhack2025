@@ -3,8 +3,8 @@ import 'dart:convert';
 
 class ApiService {
   final String serverUrl = "http://127.0.0.1:5000";
-  // final String renderServerUri = "https://renderhealthhack2025.onrender.com"; // Change this to "http://127.0.0.1:5000" for testing purposes
-  final String renderServerUri = "http://127.0.0.1:5000";
+  final String renderServerUri = "https://renderhealthhack2025.onrender.com"; // Change this to "http://127.0.0.1:5000" for testing purposes
+  // final String renderServerUri = "http://127.0.0.1:5000";
 
   Future<String> checkServerOnline() async {
     try {
