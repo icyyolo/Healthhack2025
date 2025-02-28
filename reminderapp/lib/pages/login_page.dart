@@ -80,55 +80,136 @@ class _LoginPageState extends State<LoginPage> {
     super.dispose();
   }
 
+  // Handle 'Enter' key press
+  void _onSubmit(String value) {
+    _login();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text("Welcome to ManarDr"),
-        centerTitle: true,
-      ),
-      body: Padding(
-        padding: EdgeInsets.all(16.0),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            TextField(
-              controller: _usernameController,
-              decoration: InputDecoration(
-                labelText: "Username",
-                border: OutlineInputBorder(),
-                prefixIcon: Icon(Icons.person),
-              ),
+      // backgroundColor: Color(0xFF23A5C3), // Background color of the entire page
+      backgroundColor: Colors.grey, // Background color of the entire page
+      body: Center(
+        child: SingleChildScrollView(
+          child: Container(
+            width: 400, // Fixed width for the box
+            height: 600, // Fixed height for the box
+            padding: EdgeInsets.all(20), // Padding inside the box
+            decoration: BoxDecoration(
+              color: Colors.white, // Background color of the box
+              borderRadius: BorderRadius.circular(20), // Rounded corners
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.1),
+                  blurRadius: 10,
+                  spreadRadius: 5,
+                ),
+              ],
             ),
-            SizedBox(height: 16),
-            TextField(
-              controller: _passwordController,
-              obscureText: true,
-              decoration: InputDecoration(
-                labelText: "Password",
-                border: OutlineInputBorder(),
-                prefixIcon: Icon(Icons.lock),
-              ),
-            ),
-            SizedBox(height: 24),
-            _isLoading
-                ? CircularProgressIndicator()
-                : ElevatedButton(
-                    onPressed: _login,
-                    style: ElevatedButton.styleFrom(
-                      minimumSize: Size(double.infinity, 50),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(25),
-                      ),
-                    ),
-                    child: Text("Login"),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                // Logo
+                ClipOval(
+                  child: Image.asset(
+                    "images/Logo.png", // Replace with your image path
+                    width: 100, // Adjust the width as needed
+                    height: 100, // Adjust the height as needed
+                    
                   ),
-            Text(
-              _isConnected ? "Connected!" : "Not Connected.",
-              style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                ),
+                SizedBox(height: 20),
+                // Welcome to ManarDr text
+                Text(
+                  "Welcome to Dr Discharge",
+                  style: TextStyle(
+                    fontSize: 24,
+                    fontWeight: FontWeight.w900,
+                    color: Colors.black, // Text color
+                  ),
+                ),
+                SizedBox(height: 20),
+                // Username field
+                Container(
+                  height: 60, // Fixed height for the text field
+                  child: TextField(
+                    controller: _usernameController,
+                    decoration: InputDecoration(
+                      labelText: "Username",
+                      filled: true,
+                      fillColor: Colors.white, // Background color of the text field
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(40),
+                      ),
+                      prefixIcon: Icon(Icons.person),
+                    ),
+                    onSubmitted: _onSubmit, // Handle 'Enter' key press
+                  ),
+                ),
+                SizedBox(height: 16),
+                // Password field
+                Container(
+                  height: 60, // Fixed height for the text field
+                  child: TextField(
+                    controller: _passwordController,
+                    obscureText: true,
+                    decoration: InputDecoration(
+                      labelText: "Password",
+                      filled: true,
+                      fillColor: Colors.white, // Background color of the text field
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(40),
+                      ),
+                      prefixIcon: Icon(Icons.lock),
+                    ),
+                    onSubmitted: _onSubmit, // Handle 'Enter' key press
+                  ),
+                ),
+                SizedBox(height: 24),
+                // Login button
+                _isLoading
+                    ? CircularProgressIndicator()
+                    : ElevatedButton(
+                        onPressed: _login,
+                        style: ElevatedButton.styleFrom(
+                          minimumSize: Size(double.infinity, 50),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(25),
+                          ),
+                          backgroundColor: Colors.blue, // Button color
+                        ),
+                        child: Text(
+                          "LOGIN",
+                          style: TextStyle(
+                            fontSize: 18,
+                            color: Colors.white,
+                          ),
+                        ),
+                      ),
+                SizedBox(height: 16),
+                // White line divider above "Log in with Singpass" text
+                Divider(
+                  color: Colors.grey, // Divider color
+                  thickness: 1, // Line thickness
+                ),
+                SizedBox(height: 16),
+                // Log in with Singpass text
+                _isLoading
+                    ? CircularProgressIndicator() // Show loading spinner here
+                    : Text(
+                        "Log in with Singpass",
+                        style: TextStyle(
+                          fontFamily: 'Inter',
+                          fontSize: 20,
+                          fontWeight: FontWeight.w900,
+                          color: Colors.black, // Text color
+                        ),
+                      ),
+                SizedBox(height: 20),
+              ],
             ),
-            SizedBox(height: 20),
-          ],
+          ),
         ),
       ),
     );
