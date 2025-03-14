@@ -8,18 +8,26 @@ class MessageBubble extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
     return Align(
       alignment: isUser ? Alignment.centerRight : Alignment.centerLeft,
       child: Container(
         padding: EdgeInsets.symmetric(vertical: 10, horizontal: 15),
         margin: EdgeInsets.symmetric(vertical: 5, horizontal: 10),
         decoration: BoxDecoration(
-          color: isUser ? Colors.blue[200] : Colors.green[200],
+          color: isUser
+              ? theme.colorScheme.primary // User's message color (primary color)
+              : theme.colorScheme.secondary, // Other user's message color (secondary color)
           borderRadius: BorderRadius.circular(20),
         ),
         child: Text(
           text,
-          style: TextStyle(color: Colors.white),
+          style: TextStyle(
+            color: isUser
+                ? theme.colorScheme.onPrimary // Text color for user's message
+                : theme.colorScheme.onSecondary, // Text color for other user's message
+          ),
         ),
       ),
     );
