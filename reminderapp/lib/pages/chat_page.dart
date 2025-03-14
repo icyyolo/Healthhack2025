@@ -2,8 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import '../widgets/message_bubble.dart';
 import '../services/api_service.dart';
+import '../models/Medication.dart'; // Import the Medication class
 import 'settings_page.dart';
 import 'transcript_page.dart';
+import 'drawer.dart'; // Import the custom drawer
 
 class ChatPage extends StatefulWidget {
   final String username;
@@ -14,41 +16,39 @@ class ChatPage extends StatefulWidget {
   _ChatPageState createState() => _ChatPageState();
 }
 
-class Medication {
-  final String name;
-  final String dosage;
-  final String frequency;
-  final String imageAssetPath;
-
-  Medication({
-    required this.name,
-    required this.dosage,
-    required this.frequency,
-    required this.imageAssetPath,
-  });
-}
-
 class _ChatPageState extends State<ChatPage> {
   List<Map<String, String>> messages = [];
   final TextEditingController _controller = TextEditingController();
   final FocusNode _focusNode = FocusNode();
   final ApiService _apiService = ApiService();
   bool _isLoading = false;
-
-  List<Medication> medications = [
-    Medication(
-      name: 'Aspirin',
-      dosage: '100mg',
-      frequency: 'Every 6 hours',
-      imageAssetPath: 'images/Aspirin.png',
-    ),
-    Medication(
-      name: 'Nitroglycerin',
-      dosage: '0.4mg',
-      frequency: 'Every 8 hours',
-      imageAssetPath: 'images/Nitroglycerin.png',
-    ),
-  ];
+  List<Medication> medications = [];
+  // List<Medication> medications = [
+  //   Medication(
+  //     name: 'Aspirin',
+  //     dosage: '100mg',
+  //     frequency: 'Every 6 hours',
+  //     imageAssetPath: 'images/Aspirin.png',
+  //   ),
+  //   Medication(
+  //     name: 'Nitroglycerin',
+  //     dosage: '0.4mg',
+  //     frequency: 'Every 8 hours',
+  //     imageAssetPath: 'images/Nitroglycerin.png',
+  //   ),
+  //   Medication(
+  //     name: 'Aspirins',
+  //     dosage: '1000mg',
+  //     frequency: 'Every 6 hours',
+  //     imageAssetPath: 'images/Aspirin.png',
+  //   ),
+  //   Medication(
+  //     name: 'Aspirinss',
+  //     dosage: '1001mg',
+  //     frequency: 'Every 6 hours',
+  //     imageAssetPath: 'images/Aspirin.png',
+  //   ),
+  // ];
 
   void sendMessage() async {
     String message = _controller.text.trim();
@@ -56,7 +56,6 @@ class _ChatPageState extends State<ChatPage> {
       setState(() {
         _isLoading = true;
       });
-
       String serverReply = await _apiService.sendChunkToServer(message);
       setState(() {
         messages.add({"user": message, "server": serverReply});
@@ -65,7 +64,6 @@ class _ChatPageState extends State<ChatPage> {
       setState(() {
         _isLoading = false;
       });
-
       FocusScope.of(context).requestFocus(_focusNode);
     }
   }
@@ -90,10 +88,31 @@ class _ChatPageState extends State<ChatPage> {
     );
   }
 
+  void getMedication() async {
+    try {
+      // Call the API service to get medications
+      List<Medication> fetchedMedications =
+          await _apiService.getMedication(widget.username);
+
+      // Update the state with the fetched medications
+      setState(() {
+        medications = fetchedMedications;
+      });
+    } catch (e) {
+      // Handle errors (e.g., show a snackbar or log the error)
+      print("Error fetching medications: $e");
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    getMedication();
+  }
+
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.grey,
@@ -124,162 +143,12 @@ class _ChatPageState extends State<ChatPage> {
           ],
         ),
       ),
-      drawer: Drawer(
-        child: Column(
-          children: [
-            Expanded(
-              child: ListView(
-                padding: EdgeInsets.zero,
-                children: [
-                  DrawerHeader(
-                    decoration: BoxDecoration(
-                      color: Colors.grey,
-                    ),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          'Welcome back!',
-                          style: TextStyle(
-                            fontFamily: 'Inter',
-                            color: Colors.white,
-                            fontSize: 15,
-                          ),
-                        ),
-                        SizedBox(height: 5),
-                        Text(
-                          widget.username,
-                          style: TextStyle(
-                            fontFamily: 'Inter',
-                            color: Colors.white,
-                            fontSize: 24,
-                            fontWeight: FontWeight.w900,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  ListTile(
-                    title: const Text('View Transcript',
-                        style: TextStyle(
-                            fontFamily: 'Inter',
-                            // color: Colors.black,
-                            fontWeight: FontWeight.w300)),
-                    onTap: () {
-                      Navigator.pop(context);
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => TranscriptPage(username: widget.username),
-                        ),
-                      );
-                    },
-                  ),
-                  Divider(),
-                  Padding(
-                    padding: const EdgeInsets.all(16.0),
-                    child: Text(
-                      'Medications',
-                      style: TextStyle(
-                        fontFamily: 'Inter',
-                        // color: Colors.black,
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ),
-                  // Display medications in a stacked format
-                  ...medications.map((medication) {
-                    return GestureDetector(
-                      onTap: () {
-                        showMedicationImage(context, medication.imageAssetPath);
-                      },
-                      child: Card(
-                        margin: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                        child: Padding(
-                          padding: const EdgeInsets.all(16.0),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                'Next Dose:',
-                                style: TextStyle(
-                                  fontFamily: 'Inter',
-                                  color: Colors.grey,
-                                  fontSize: 14,
-                                ),
-                              ),
-                              Text(
-                                '3pm', // Replace with actual next dose time if available
-                                style: TextStyle(
-                                  fontFamily: 'Inter',
-                                  // color: Colors.black,
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                              SizedBox(height: 10),
-                              Row(
-                                children: [
-                                  Image.asset(
-                                    medication.imageAssetPath,
-                                    width: 50,
-                                    height: 50,
-                                  ),
-                                  SizedBox(width: 10),
-                                  Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                    children: [
-                                      Text(
-                                        medication.name,
-                                        style: TextStyle(
-                                          fontFamily: 'Inter',
-                                          // color: Colors.black,
-                                          fontSize: 16,
-                                          fontWeight: FontWeight.bold,
-                                        ),
-                                      ),
-                                      Text(
-                                        '${medication.dosage} • ${medication.frequency}',
-                                        style: TextStyle(
-                                          fontFamily: 'Inter',
-                                          color: Colors.grey,
-                                          fontSize: 14,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ],
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                    );
-                  }).toList(),
-                ],
-              ),
-            ),
-            Divider(),
-            ListTile(
-              title: const Text('Settings',
-                  style: TextStyle(
-                      fontFamily: 'Inter',
-                      // color: Colors.black,
-                      fontWeight: FontWeight.w300)),
-              onTap: () {
-                Navigator.pop(context);
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => SettingsPage(username: widget.username),
-                  ),
-                );
-              },
-            ),
-          ],
-        ),
+      drawer: CustomDrawer(
+        username: widget.username,
+        medications: medications,
+        showMedicationImage: (imageAssetPath) {
+          showMedicationImage(context, imageAssetPath);
+        },
       ),
       body: Column(
         children: [
@@ -309,10 +178,11 @@ class _ChatPageState extends State<ChatPage> {
             padding: EdgeInsets.all(8.0),
             child: Container(
               decoration: BoxDecoration(
-                color: theme.colorScheme.surface, // Theme-aware background
+                color: theme.colorScheme.surface,
                 borderRadius: BorderRadius.circular(25),
-                border: Border.all(color: Colors.grey,
-                width: 1.0,
+                border: Border.all(
+                  color: Colors.grey,
+                  width: 1.0,
                 ),
                 boxShadow: [
                   BoxShadow(
@@ -331,13 +201,14 @@ class _ChatPageState extends State<ChatPage> {
                       decoration: InputDecoration(
                         hintText: "Type a message...",
                         hintStyle: TextStyle(
-                          color: theme.colorScheme.onSurface.withOpacity(0.6), // Theme-aware hint text color
+                          color: theme.colorScheme.onSurface.withOpacity(0.6),
                         ),
                         border: InputBorder.none,
-                        contentPadding: EdgeInsets.symmetric(horizontal: 20, vertical: 15),
+                        contentPadding:
+                            EdgeInsets.symmetric(horizontal: 20, vertical: 15),
                       ),
                       style: TextStyle(
-                        color: theme.colorScheme.onSurface, // Theme-aware text color
+                        color: theme.colorScheme.onSurface,
                       ),
                       textInputAction: TextInputAction.send,
                       onSubmitted: (value) {
@@ -347,8 +218,9 @@ class _ChatPageState extends State<ChatPage> {
                   ),
                   IconButton(
                     icon: _isLoading
-                        ? CircularProgressIndicator(color: theme.colorScheme.primary) // Theme-aware loading indicator
-                        : Icon(Icons.send, color: theme.colorScheme.primary), // Theme-aware icon color
+                        ? CircularProgressIndicator(
+                            color: theme.colorScheme.primary)
+                        : Icon(Icons.send, color: theme.colorScheme.primary),
                     onPressed: _isLoading ? null : sendMessage,
                   ),
                 ],

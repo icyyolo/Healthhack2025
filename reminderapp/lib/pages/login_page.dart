@@ -94,7 +94,8 @@ class _LoginPageState extends State<LoginPage> {
             height: 600, // Fixed height for the box
             padding: EdgeInsets.all(20), // Padding inside the box
             decoration: BoxDecoration(
-              color: theme.colorScheme.surface, // Theme-aware background color of the box
+              color: theme.colorScheme
+                  .surface, // Theme-aware background color of the box
               borderRadius: BorderRadius.circular(20), // Rounded corners
               boxShadow: [
                 BoxShadow(
@@ -122,7 +123,8 @@ class _LoginPageState extends State<LoginPage> {
                   style: TextStyle(
                     fontSize: 24,
                     fontWeight: FontWeight.w900,
-                    color: theme.colorScheme.onSurface, // Theme-aware text color
+                    color:
+                        theme.colorScheme.onSurface, // Theme-aware text color
                   ),
                 ),
                 SizedBox(height: 20),
@@ -134,11 +136,14 @@ class _LoginPageState extends State<LoginPage> {
                     decoration: InputDecoration(
                       labelText: "Username",
                       filled: true,
-                      fillColor: theme.colorScheme.surface, // Theme-aware background color
+                      fillColor: theme
+                          .colorScheme.surface, // Theme-aware background color
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(40),
                       ),
-                      prefixIcon: Icon(Icons.person, color: theme.colorScheme.onSurface), // Theme-aware icon color
+                      prefixIcon: Icon(Icons.person,
+                          color: theme
+                              .colorScheme.onSurface), // Theme-aware icon color
                     ),
                     onSubmitted: _onSubmit, // Handle 'Enter' key press
                   ),
@@ -153,11 +158,14 @@ class _LoginPageState extends State<LoginPage> {
                     decoration: InputDecoration(
                       labelText: "Password",
                       filled: true,
-                      fillColor: theme.colorScheme.surface, // Theme-aware background color
+                      fillColor: theme
+                          .colorScheme.surface, // Theme-aware background color
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(40),
                       ),
-                      prefixIcon: Icon(Icons.lock, color: theme.colorScheme.onSurface), // Theme-aware icon color
+                      prefixIcon: Icon(Icons.lock,
+                          color: theme
+                              .colorScheme.onSurface), // Theme-aware icon color
                     ),
                     onSubmitted: _onSubmit, // Handle 'Enter' key press
                   ),
@@ -173,35 +181,48 @@ class _LoginPageState extends State<LoginPage> {
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(25),
                           ),
-                          backgroundColor: theme.colorScheme.primary, // Theme-aware button color
+                          backgroundColor: theme
+                              .colorScheme.primary, // Theme-aware button color
                         ),
                         child: Text(
                           "LOGIN",
                           style: TextStyle(
                             fontSize: 18,
-                            color: theme.colorScheme.onPrimary, // Theme-aware text color
+                            color: theme.colorScheme
+                                .onPrimary, // Theme-aware text color
                           ),
                         ),
                       ),
                 SizedBox(height: 16),
                 // Divider
                 Divider(
-                  color: theme.colorScheme.onSurface.withOpacity(0.5), // Theme-aware divider color
+                  color: theme.colorScheme.onSurface
+                      .withOpacity(0.5), // Theme-aware divider color
                   thickness: 1, // Line thickness
                 ),
                 SizedBox(height: 16),
                 // Log in with Singpass text
-                _isLoading
-                    ? CircularProgressIndicator() // Show loading spinner here
-                    : Text(
-                        "Log in with Singpass",
-                        style: TextStyle(
-                          fontFamily: 'Inter',
-                          fontSize: 20,
-                          fontWeight: FontWeight.w900,
-                          color: theme.colorScheme.onSurface, // Theme-aware text color
-                        ),
-                      ),
+                Text(
+                  "Log in with Singpass",
+                  style: TextStyle(
+                    fontFamily: 'Inter',
+                    fontSize: 20,
+                    fontWeight: FontWeight.w900,
+                    color:
+                        theme.colorScheme.onSurface, // Theme-aware text color
+                  ),
+                ),
+                // _isLoading
+                //     ? CircularProgressIndicator() // Show loading spinner here
+                //     : Text(
+                //         "Log in with Singpass",
+                //         style: TextStyle(
+                //           fontFamily: 'Inter',
+                //           fontSize: 20,
+                //           fontWeight: FontWeight.w900,
+                //           color: theme.colorScheme.onSurface, // Theme-aware text color
+                //         ),
+                //       ),
                 SizedBox(height: 20),
               ],
             ),

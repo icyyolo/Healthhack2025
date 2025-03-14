@@ -1,5 +1,5 @@
 from flask import Blueprint, request, jsonify
-from routes.mongodb import find_one_collection
+from backend.routes.mongodb import find_one_collection
 import hashlib
 
 auth_bp = Blueprint('auth', __name__)

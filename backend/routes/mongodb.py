@@ -31,3 +31,16 @@ def find_one_collection(query, colname):
     close_client(client)
     return obj
 
+def find_many_collections(query, colname):
+    client = init_pymongo()
+    col = open_collection(colname, client)
+    cur = col.find(query)
+    obj = []
+    for line in cur:
+        line.pop('_id')
+        line.pop('username')
+        line.pop('quantity')
+        print(line)
+        obj.append(line)
+    close_client(client)
+    return obj

@@ -1,9 +1,11 @@
-from miniGPT import miniGPT
+# from miniGPT import miniGPT
 from flask import Flask, request, jsonify
 from backend.routes.auth import auth_bp
+from backend.routes.medicine import medicine_bp
 
 app = Flask(__name__)
 app.register_blueprint(auth_bp)
+app.register_blueprint(medicine_bp)
 
 received_messages = {}
 
@@ -26,8 +28,10 @@ async def receive_chunk():
 
     # Example: Server sends a modified message back
     # response_message = f"Server received: {message_chunk[::-1]}"  # Reverse text as an example
-    response_message = await miniGPT.askLLM("1", message_chunk)
-
+    
+    # rmb uncomment this
+    # response_message = await miniGPT.askLLM("1", message_chunk)
+    response_message = "hi"
     return jsonify({"status": "Chunk received", "reply": response_message}), 200
 
 @app.route('/get_message', methods=['GET'])

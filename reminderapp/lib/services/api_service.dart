@@ -1,10 +1,30 @@
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+import '../models/Medication.dart';
 
 class ApiService {
   final String serverUrl = "http://127.0.0.1:5000";
-  final String renderServerUri = "https://renderhealthhack2025.onrender.com"; // Change this to "http://127.0.0.1:5000" for testing purposes
+  final String renderServerUri =
+      "https://renderhealthhack2025.onrender.com"; // Change this to "http://127.0.0.1:5000" for testing purposes
   // final String renderServerUri = "http://127.0.0.1:5000";
+
+  Future<List<Medication>> getMedication(String user) async {
+    List<Medication> medications = [];
+    try {
+      var response = await http.post(
+        Uri.parse(serverUrl + "/api/medicine"),
+        headers: {"Content-Type": "application/json"},
+        body: jsonEncode({"username": user}),
+      );
+      List<dynamic> decodedJson = jsonDecode(response.body);
+      List<Medication> medications = decodedJson
+          .map((medicationMap) => Medication.fromMap(medicationMap))
+          .toList();
+      return medications;
+    } catch (e) {
+      return medications;
+    }
+  }
 
   Future<String> checkServerOnline() async {
     try {

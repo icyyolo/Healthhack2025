@@ -31,7 +31,7 @@ def initllm():
 
     print("Restoring ChromaDB (Will take around 1.5 mins)...")
     # Load the backup JSON
-    with open("json/chroma_backup.json", "r") as f:
+    with open("miniGPT/json/chroma_backup.json", "r") as f:
         backup_data = json.load(f)
 
     # Add data back into the vectorstore

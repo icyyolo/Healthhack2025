@@ -23,6 +23,7 @@ class MyApp extends StatelessWidget {
     final themeProvider = Provider.of<ThemeProvider>(context);
 
     return MaterialApp(
+      debugShowCheckedModeBanner: false,
       title: 'Flutter Chat App',
       theme: ThemeData.light().copyWith(
         // Customize light theme
@@ -34,7 +35,8 @@ class MyApp extends StatelessWidget {
           secondary: Colors.grey,
         ),
         textTheme: TextTheme(
-          bodyLarge: TextStyle(color: Colors.black), // Default text color for light mode
+          bodyLarge: TextStyle(
+              color: Colors.black), // Default text color for light mode
           bodyMedium: TextStyle(color: Colors.black),
         ),
       ),
@@ -48,11 +50,13 @@ class MyApp extends StatelessWidget {
           secondary: Color(0xFF3A3B3C),
         ),
         textTheme: TextTheme(
-          bodyLarge: TextStyle(color: Colors.white), // Default text color for dark mode
+          bodyLarge: TextStyle(
+              color: Colors.white), // Default text color for dark mode
           bodyMedium: TextStyle(color: Colors.white),
         ),
       ),
-      themeMode: themeProvider.themeMode, // Use the theme mode from ThemeProvider
+      themeMode:
+          themeProvider.themeMode, // Use the theme mode from ThemeProvider
       initialRoute: '/login', // Set the login page as the home screen
       routes: {
         '/login': (context) => LoginPage(), // Route for the login page
@@ -66,7 +70,9 @@ class MyApp extends StatelessWidget {
         },
         '/transcript': (context) {
           final username = ModalRoute.of(context)!.settings.arguments as String;
-          return TranscriptPage(username: username); // Fixed: Use TranscriptPage instead of SettingsPage
+          return TranscriptPage(
+              username:
+                  username); // Fixed: Use TranscriptPage instead of SettingsPage
         },
       },
     );
