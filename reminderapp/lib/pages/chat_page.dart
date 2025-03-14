@@ -2,9 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import '../widgets/message_bubble.dart';
 import '../services/api_service.dart';
-import '../models/Medication.dart'; // Import the Medication class
-import 'settings_page.dart';
-import 'transcript_page.dart';
+import '../models/medication.dart'; // Import the Medication class
 import 'drawer.dart'; // Import the custom drawer
 
 class ChatPage extends StatefulWidget {

@@ -4,6 +4,7 @@ import 'pages/login_page.dart';
 import 'pages/chat_page.dart';
 import 'pages/settings_page.dart';
 import 'pages/transcript_page.dart';
+import 'pages/suggestions_page.dart';
 import 'theme_provider.dart'; // Import the ThemeProvider
 
 void main() {
@@ -74,6 +75,10 @@ class MyApp extends StatelessWidget {
               username:
                   username); // Fixed: Use TranscriptPage instead of SettingsPage
         },
+        './suggestions': (context) {
+          final username = ModalRoute.of(context)!.settings.arguments as String;
+          return SuggestionsPage(username: username);
+        }
       },
     );
   }

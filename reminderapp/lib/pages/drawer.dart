@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import '../widgets/message_bubble.dart'; // Adjust the import path as needed
-import '../models/Medication.dart'; // Import the Medication class
+import '../models/medication.dart'; // Import the Medication class
 import 'settings_page.dart';
 import 'transcript_page.dart';
+import 'suggestions_page.dart';
 
 class CustomDrawer extends StatelessWidget {
   final String username;
@@ -64,6 +64,21 @@ class CustomDrawer extends StatelessWidget {
                       MaterialPageRoute(
                         builder: (context) =>
                             TranscriptPage(username: username),
+                      ),
+                    );
+                  },
+                ),
+                ListTile(
+                  title: const Text('Suggestions',
+                      style: TextStyle(
+                          fontFamily: 'Inter', fontWeight: FontWeight.w300)),
+                  onTap: () {
+                    Navigator.pop(context);
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) =>
+                            SuggestionsPage(username: username),
                       ),
                     );
                   },

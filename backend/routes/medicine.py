@@ -10,4 +10,19 @@ def medicine():
     temp = find_many_collections({"username": username}, "medicine")
     print(temp)
     return jsonify(temp), 200
-    pass
+    
+# TODO Transfer this to another folder
+@medicine_bp.route('/api/suggestions', methods=['POST'])
+def suggestions():
+    return jsonify({
+    "title": "Take Medication on Time",
+    "description": "Ensure you take your medication at the prescribed times to avoid missing doses.",
+  },
+  {
+    "title": "Stay Hydrated",
+    "description": "Drink plenty of water throughout the day to stay healthy.",
+  },
+  {
+    "title": "Consult Your Doctor",
+    "description": "If you experience any side effects, consult your doctor immediately.",
+  }), 200

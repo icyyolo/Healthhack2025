@@ -1,12 +1,33 @@
 import 'package:http/http.dart' as http;
 import 'dart:convert';
-import '../models/Medication.dart';
+import '../models/medication.dart';
+import '../models/suggestions.dart';
 
 class ApiService {
   final String serverUrl = "http://127.0.0.1:5000";
   final String renderServerUri =
       "https://renderhealthhack2025.onrender.com"; // Change this to "http://127.0.0.1:5000" for testing purposes
   // final String renderServerUri = "http://127.0.0.1:5000";
+
+  Future<List<Suggestion>> getSuggestions(String username) async {
+    final response = await http.post(
+      Uri.parse(serverUrl + "/api/suggestions"),
+      headers: {"Content-Type": "application/json"},
+      body: jsonEncode({"username": username}),
+    );
+
+    if (response.statusCode == 200) {
+      List<dynamic> decodedJson = jsonDecode(response.body);
+      return decodedJson
+          .map((suggestionMap) => Suggestion(
+                title: suggestionMap['title'],
+                description: suggestionMap['description'],
+              ))
+          .toList();
+    } else {
+      throw Exception("Failed to load suggestions");
+    }
+  }
 
   Future<List<Medication>> getMedication(String user) async {
     List<Medication> medications = [];
