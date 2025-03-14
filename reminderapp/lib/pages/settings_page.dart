@@ -15,11 +15,18 @@ class SettingsPage extends StatelessWidget {
   }
 
   void _showLogoutConfirmation(BuildContext context) {
+    final theme = Theme.of(context);
+
     showDialog(
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text("Confirm Logout"),
+          title: Text(
+            "Confirm Logout",
+            style: TextStyle(
+              color: theme.colorScheme.onSurface,
+            )
+          ),
           content: Text("Are you sure you want to log out?"),
           actions: [
             TextButton(

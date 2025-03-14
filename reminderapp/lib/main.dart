@@ -31,6 +31,7 @@ class MyApp extends StatelessWidget {
           onPrimary: Colors.white, // Text color on primary color
           surface: Colors.white, // Background color
           onSurface: Colors.black, // Text color on background
+          secondary: Colors.grey,
         ),
         textTheme: TextTheme(
           bodyLarge: TextStyle(color: Colors.black), // Default text color for light mode
@@ -44,6 +45,7 @@ class MyApp extends StatelessWidget {
           onPrimary: Colors.white, // Text color on primary color
           surface: Color(0xFF121212), // Background color
           onSurface: Colors.white, // Text color on background
+          secondary: Color(0xFF3A3B3C),
         ),
         textTheme: TextTheme(
           bodyLarge: TextStyle(color: Colors.white), // Default text color for dark mode

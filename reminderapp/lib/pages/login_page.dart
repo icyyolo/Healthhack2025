@@ -41,9 +41,6 @@ class _LoginPageState extends State<LoginPage> {
       return;
     }
 
-    // Simulate a login request (replace with actual API call)
-    // await Future.delayed(Duration(seconds: 2)); // Simulate network delay
-
     bool status = await _apiService.validateLogin(username, password);
     setState(() {
       _isLoading = false;
@@ -62,7 +59,6 @@ class _LoginPageState extends State<LoginPage> {
   @override
   void initState() {
     super.initState();
-    // Call the async method here
     // Start polling by calling fetchData every 5 seconds
     _timer = Timer.periodic(Duration(seconds: 5), (timer) {
       _test();
@@ -87,9 +83,10 @@ class _LoginPageState extends State<LoginPage> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
     return Scaffold(
-      // backgroundColor: Color(0xFF23A5C3), // Background color of the entire page
-      backgroundColor: Colors.grey, // Background color of the entire page
+      backgroundColor: theme.colorScheme.secondary, // Theme-aware background
       body: Center(
         child: SingleChildScrollView(
           child: Container(
@@ -97,7 +94,7 @@ class _LoginPageState extends State<LoginPage> {
             height: 600, // Fixed height for the box
             padding: EdgeInsets.all(20), // Padding inside the box
             decoration: BoxDecoration(
-              color: Colors.white, // Background color of the box
+              color: theme.colorScheme.surface, // Theme-aware background color of the box
               borderRadius: BorderRadius.circular(20), // Rounded corners
               boxShadow: [
                 BoxShadow(
@@ -119,13 +116,13 @@ class _LoginPageState extends State<LoginPage> {
                   ),
                 ),
                 SizedBox(height: 20),
-                // Welcome to ManarDr text
+                // Welcome to Dr Discharge text
                 Text(
                   "Welcome to Dr Discharge",
                   style: TextStyle(
                     fontSize: 24,
                     fontWeight: FontWeight.w900,
-                    color: Colors.black, // Text color
+                    color: theme.colorScheme.onSurface, // Theme-aware text color
                   ),
                 ),
                 SizedBox(height: 20),
@@ -137,11 +134,11 @@ class _LoginPageState extends State<LoginPage> {
                     decoration: InputDecoration(
                       labelText: "Username",
                       filled: true,
-                      fillColor: Colors.white, // Background color of the text field
+                      fillColor: theme.colorScheme.surface, // Theme-aware background color
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(40),
                       ),
-                      prefixIcon: Icon(Icons.person),
+                      prefixIcon: Icon(Icons.person, color: theme.colorScheme.onSurface), // Theme-aware icon color
                     ),
                     onSubmitted: _onSubmit, // Handle 'Enter' key press
                   ),
@@ -156,11 +153,11 @@ class _LoginPageState extends State<LoginPage> {
                     decoration: InputDecoration(
                       labelText: "Password",
                       filled: true,
-                      fillColor: Colors.white, // Background color of the text field
+                      fillColor: theme.colorScheme.surface, // Theme-aware background color
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(40),
                       ),
-                      prefixIcon: Icon(Icons.lock),
+                      prefixIcon: Icon(Icons.lock, color: theme.colorScheme.onSurface), // Theme-aware icon color
                     ),
                     onSubmitted: _onSubmit, // Handle 'Enter' key press
                   ),
@@ -176,20 +173,20 @@ class _LoginPageState extends State<LoginPage> {
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(25),
                           ),
-                          backgroundColor: Colors.blue, // Button color
+                          backgroundColor: theme.colorScheme.primary, // Theme-aware button color
                         ),
                         child: Text(
                           "LOGIN",
                           style: TextStyle(
                             fontSize: 18,
-                            color: Colors.white,
+                            color: theme.colorScheme.onPrimary, // Theme-aware text color
                           ),
                         ),
                       ),
                 SizedBox(height: 16),
-                // White line divider above "Log in with Singpass" text
+                // Divider
                 Divider(
-                  color: Colors.grey, // Divider color
+                  color: theme.colorScheme.onSurface.withOpacity(0.5), // Theme-aware divider color
                   thickness: 1, // Line thickness
                 ),
                 SizedBox(height: 16),
@@ -202,7 +199,7 @@ class _LoginPageState extends State<LoginPage> {
                           fontFamily: 'Inter',
                           fontSize: 20,
                           fontWeight: FontWeight.w900,
-                          color: Colors.black, // Text color
+                          color: theme.colorScheme.onSurface, // Theme-aware text color
                         ),
                       ),
                 SizedBox(height: 20),
